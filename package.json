@@ -12,9 +12,9 @@
     "react": "^18",
     "react-dom": "^18",
     "next": "13.5.4",
-    "@trigger.dev/sdk": "0.0.0-node-18-20231010094401",
-    "@trigger.dev/nextjs": "0.0.0-node-18-20231010094401",
-    "@trigger.dev/react": "0.0.0-node-18-20231010094401"
+    "@trigger.dev/sdk": "0.0.0-auto-yield-20231011151933",
+    "@trigger.dev/nextjs": "0.0.0-auto-yield-20231011151933",
+    "@trigger.dev/react": "0.0.0-auto-yield-20231011151933"
   },
   "devDependencies": {
     "typescript": "^5",

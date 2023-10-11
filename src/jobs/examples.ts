@@ -1,27 +1,47 @@
 import { eventTrigger } from "@trigger.dev/sdk";
 import { client } from "@/trigger";
 
-// Your first job
-// This Job will be triggered by an event, log a joke to the console, and then wait 5 seconds before logging the punchline
 client.defineJob({
-  // This is the unique identifier for your Job, it must be unique across all Jobs in your project
-  id: "example-job",
-  name: "Example Job: a joke with a delay",
-  version: "0.0.1",
-  // This is triggered by an event using eventTrigger. You can also trigger Jobs with webhooks, on schedules, and more: https://trigger.dev/docs/documentation/concepts/triggers/introduction
+  id: "auto-yield-1",
+  name: "Auto Yield 1",
+  version: "1.0.0",
   trigger: eventTrigger({
-    name: "example.event",
+    name: "auto.yield.1",
   }),
   run: async (payload, io, ctx) => {
-    // This logs a message to the console
-    await io.logger.info("🧪 Example Job: a joke with a delay");
-    await io.logger.info("How do you comfort a JavaScript bug?");
-    // This waits for 5 seconds, the second parameter is the number of seconds to wait, you can add delays of up to a year
-    await io.wait("Wait 5 seconds for the punchline...", 5);
-    await io.logger.info("You console it! 🤦");
-    await io.logger.info(
-      "✨ Congratulations, You just ran your first successful Trigger.dev Job! ✨"
-    );
-    // To learn how to write much more complex (and probably funnier) Jobs, check out our docs: https://trigger.dev/docs/documentation/guides/create-a-job
+    await io.runTask("initial-long-task", async (task) => {
+      await new Promise((resolve) => setTimeout(resolve, payload.initial));
+
+      return {
+        message: "initial-long-task",
+      };
+    });
+
+    for (let i = 0; i < payload.iterations; i++) {
+      await io.runTask(`task.${i}`, async (task) => {
+        // Create a random number between 250 and 1250
+        const random = Math.floor(Math.random() * 1000) + 250;
+
+        await new Promise((resolve) => setTimeout(resolve, random));
+
+        await fetch(process.env.REQUEST_BIN_URL!, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `task.${i}`,
+            random,
+            idempotencyKey: task.idempotencyKey,
+            runId: ctx.run.id,
+          }),
+        });
+
+        return {
+          message: `task.${i}`,
+          random,
+        };
+      });
+    }
   },
 });
