@@ -6,4 +6,4 @@ import "@/jobs";
 //this route is used to send and receive data with Trigger.dev
 export const { POST, dynamic } = createAppRoute(client);
 
-export const maxDuration = 900; // 5 minutes
+export const maxDuration = 300; // 5 minutes
